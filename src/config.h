@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <CanSatKit.h>
+#include <SD.h>
+#include <Adafruit_INA219.h>
+
 
 using namespace CanSatKit;
 

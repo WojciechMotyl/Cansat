@@ -9,7 +9,7 @@ void start_serial(uint32_t baudrate)
             ;
 }
 
-bool start_bmp(BMP280& bmp)
+bool start_bmp(BMP280 &bmp)
 {
     if (!bmp.begin())
     {
