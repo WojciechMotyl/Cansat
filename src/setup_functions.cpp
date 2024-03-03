@@ -13,17 +13,11 @@ bool start_bmp(BMP280 &bmp)
     }
 }
 
-bool start_ina(Adafruit_INA219 &ina219)
+void start_ina(INA3221 &ina)
 {
-    if (!ina219.begin())
-    {
-        return false;
-    }
-    else
-    {
-        ina219.setCalibration_16V_400mA();
-        return true;
-    }
+    ina.begin(&Wire);
+    ina.reset();
+    ina.setShuntRes(10, 10, 10);
 }
 
 bool start_radio(Radio &radio)

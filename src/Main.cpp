@@ -5,13 +5,13 @@
 using namespace CanSatKit;
 
 BMP280 bmp;
-Adafruit_INA219 ina219;
+INA3221 ina(INA3221_ADDR40_GND);
 
 Radio radio(Pins::Radio::ChipSelect,
             Pins::Radio::DIO0,
             433.0,
             Bandwidth_125000_Hz,
-            SpreadingFactor_9,
+            SpreadingFactor_10,
             CodingRate_4_8);
 
 Frame frame;
@@ -24,16 +24,14 @@ unsigned long last_cycle = 0;
 const String File_name = "test.txt";
 int mode = 0; // 0-dev mode, 1-normal mode without Serial connection
 
-int lm35_pin = A0;
-
 void setup()
 {
-    analogReadResolution(12);
+    start_ina(ina);
     SerialUSB.begin(serial_baudrate);
     if (!SerialUSB.available())
     {
         mode = 0;
-        if (start_bmp(bmp) && start_ina(ina219) && start_radio(radio) && start_sd(file, File_name))
+        if (start_bmp(bmp) && start_radio(radio))
         {
             SerialUSB.println("Dev mode ready - configuration successful");
         }
@@ -48,7 +46,7 @@ void setup()
     else
     {
         mode = 1;
-        if (start_bmp(bmp) && start_ina(ina219) && start_radio(radio) && start_sd(file, File_name))
+        if (start_bmp(bmp) && start_radio(radio))
         {
         }
         else
@@ -63,23 +61,22 @@ void loop()
 {
     double T = 0;
     double P = 0;
-    int raw;
-    float temperature;
-    float shuntvoltage = 0;
-    float busvoltage = 0;
-    float current_mA = 0;
-    float loadvoltage = 0;
-    float power_mW = 0;
+    float current_generator = 0;
+    float current_battery = 0;
+    float voltage_generator = 0;
+    float voltage_battery = 0;
+    float power_generator = 0;
+    float power_battery = 0;
 
     int time = millis_to_secound();
     if (millis() - last_cycle >= time_cycle)
     {
-        measure(ina219, bmp, T, P, raw, temperature, lm35_pin, shuntvoltage, busvoltage, current_mA, power_mW, loadvoltage);
-        write_to_file(file, File_name, temperature, P, shuntvoltage, busvoltage, current_mA, power_mW, loadvoltage, time);
-        radio_transmitter(radio, frame, temperature, P, shuntvoltage, busvoltage, current_mA, power_mW, loadvoltage, time);
+        measure(ina, bmp, T, P, voltage_battery, voltage_generator, current_battery, current_generator);
+        write_to_file(file, File_name, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
+        radio_transmitter(radio, frame, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
         if (mode == 0)
         {
-            serial_print(temperature, P, shuntvoltage, busvoltage, current_mA, power_mW, loadvoltage, time);
+            serial_print(T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
         }
         last_cycle = millis();
     }

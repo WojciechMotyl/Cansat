@@ -1,6 +1,7 @@
 #include "config.h"
 
-void write_to_file(File &file, String File_name, double temperature, double pressure, float shuntvoltage, float busvoltage, float current_mA, float loadvoltage, float power_mW, int time)
+void write_to_file(File &file, String File_name, double temperature, double pressure, float &voltage_battery,
+             float &voltage_generator, float &current_generator, float &current_battery, int time)
 {
     if (file)
     {
@@ -10,37 +11,35 @@ void write_to_file(File &file, String File_name, double temperature, double pres
         file.print("\t");
         file.print(pressure, 2);
         file.print("\t");
-        file.print(shuntvoltage, 2);
+        file.print(voltage_battery, 2);
         file.print("\t");
-        file.print(busvoltage, 2);
+        file.print(current_battery, 2);
         file.print("\t");
-        file.print(current_mA, 2);
+        file.print(voltage_generator, 2);
         file.print("\t");
-        file.print(loadvoltage, 2);
-        file.print("\t");
-        file.print(power_mW, 2);
+        file.print(current_generator, 2);
         file.print("\t");
         file.println(time);
+
 
         file.close();
     }
 }
 
-void radio_transmitter(Radio &radio, Frame &frame, double temperature, double pressure, float shuntvoltage, float busvoltage, float current_mA, float loadvoltage, float power_mW, int time)
+void radio_transmitter(Radio &radio, Frame &frame, double temperature,
+                       double pressure, float &voltage_battery, float &voltage_generator, float &current_generator, float &current_battery, int time)
 {
     frame.print(temperature, 2);
     frame.print("\t");
     frame.print(pressure, 2);
     frame.print("\t");
-    frame.print(shuntvoltage, 2);
+    frame.print(voltage_battery, 2);
     frame.print("\t");
-    frame.print(busvoltage, 2);
+    frame.print(current_battery, 2);
     frame.print("\t");
-    frame.print(current_mA, 2);
+    frame.print(voltage_generator, 2);
     frame.print("\t");
-    frame.print(loadvoltage, 2);
-    frame.print("\t");
-    frame.print(power_mW, 2);
+    frame.print(current_generator, 2);
     frame.print("\t");
     frame.println(time);
 
@@ -49,43 +48,32 @@ void radio_transmitter(Radio &radio, Frame &frame, double temperature, double pr
     frame.clear();
 }
 
-void serial_print(double temperature, double pressure, float shuntvoltage, float busvoltage, float current_mA, float loadvoltage, float power_mW, int time)
+void serial_print(double temperature, double pressure, float &voltage_battery,
+                  float &voltage_generator, float &current_generator, float &current_battery, int time)
 {
     SerialUSB.print(temperature, 2);
     SerialUSB.print("\t");
     SerialUSB.print(pressure, 2);
     SerialUSB.print("\t");
-    SerialUSB.print(shuntvoltage, 2);
+    SerialUSB.print(voltage_battery, 2);
     SerialUSB.print("\t");
-    SerialUSB.print(busvoltage, 2);
+    SerialUSB.print(current_battery, 2);
     SerialUSB.print("\t");
-    SerialUSB.print(current_mA, 2);
+    SerialUSB.print(voltage_generator, 2);
     SerialUSB.print("\t");
-    SerialUSB.print(loadvoltage, 2);
-    SerialUSB.print("\t");
-    SerialUSB.print(power_mW, 2);
+    SerialUSB.print(current_generator, 2);
     SerialUSB.print("\t");
     SerialUSB.println(time);
 }
 
-float lm35_raw_to_temperature(int raw)
-{
-    float voltage = raw * 3.3 / (pow(2, 12));
-    float temperature = 100.0 * voltage;
-    return temperature;
-}
-
-void measure(Adafruit_INA219 &ina219, BMP280 &bmp, double &temperature, double &pressure, int raw, float &temperature_analog, int &lm_pin,
-             float &shuntvoltage, float &busvoltage, float &current_mA, float &loadvoltage, float &power_mW)
+void measure(INA3221 &ina, BMP280 &bmp, double &temperature, double &pressure, float &voltage_battery,
+             float &voltage_generator, float &current_generator, float &current_battery)
 {
     bmp.measureTemperatureAndPressure(temperature, pressure);
-    raw = analogRead(lm_pin);
-    temperature_analog = lm35_raw_to_temperature(raw);
-    shuntvoltage = ina219.getShuntVoltage_mV();
-    busvoltage = ina219.getBusVoltage_V();
-    current_mA = ina219.getCurrent_mA();
-    power_mW = ina219.getPower_mW();
-    loadvoltage = busvoltage + (shuntvoltage / 1000);
+    current_generator = ina.getCurrent(INA3221_CH1);
+    voltage_generator = ina.getVoltage(INA3221_CH1);
+    current_battery = ina.getCurrent(INA3221_CH2);
+    voltage_battery = ina.getVoltage(INA3221_CH2);
 }
 
 int millis_to_secound()

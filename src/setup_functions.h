@@ -7,7 +7,7 @@ void start_serial(uint32_t baudrate);
 
 bool start_bmp(BMP280 &bmp);
 
-bool start_ina(Adafruit_INA219 &ina219);
+void start_ina(INA3221 &ina);
 
 bool start_radio(Radio &radio);
 
