@@ -5,7 +5,7 @@
 #define BATTERY 2
 
 void write_to_file(File &file, String File_name, double temperature, double pressure, float &voltage_battery,
-             float &voltage_generator, float &current_generator, float &current_battery, int time);
+                   float &voltage_generator, float &current_generator, float &current_battery, int time);
 
 void radio_transmitter(Radio &radio, Frame &frame, double temperature,
                        double pressure, float &voltage_battery, float &voltage_generator, float &current_generator, float &current_battery, int time);

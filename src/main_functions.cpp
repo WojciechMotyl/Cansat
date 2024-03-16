@@ -1,7 +1,7 @@
 #include "config.h"
 
 void write_to_file(File &file, String File_name, double temperature, double pressure, float &voltage_battery,
-             float &voltage_generator, float &current_generator, float &current_battery, int time)
+                   float &voltage_generator, float &current_generator, float &current_battery, int time)
 {
     if (file)
     {
@@ -20,7 +20,6 @@ void write_to_file(File &file, String File_name, double temperature, double pres
         file.print(current_generator, 2);
         file.print("\t");
         file.println(time);
-
 
         file.close();
     }
