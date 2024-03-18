@@ -67,7 +67,8 @@ void loop()
     float voltage_battery = 0;
     float power_generator = 0;
     float power_battery = 0;
-
+    float generator_work = 0;
+    generator_work = current_generator * current_generator * 1000;
     int time = millis_to_secound();
     if (millis() - last_cycle >= time_cycle)
     {

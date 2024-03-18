@@ -1,7 +1,7 @@
 #include "config.h"
 
 void write_to_file(File &file, String File_name, double temperature, double pressure, float &voltage_battery,
-                   float &voltage_generator, float &current_generator, float &current_battery, int time)
+                   float &voltage_generator, float &current_generator, float &current_battery, int time, float generator_work)
 {
     if (file)
     {
@@ -19,6 +19,8 @@ void write_to_file(File &file, String File_name, double temperature, double pres
         file.print("\t");
         file.print(current_generator, 2);
         file.print("\t");
+        file.print(generator_work, 2);
+        file.print("\t");
         file.println(time);
 
         file.close();
@@ -26,7 +28,7 @@ void write_to_file(File &file, String File_name, double temperature, double pres
 }
 
 void radio_transmitter(Radio &radio, Frame &frame, double temperature,
-                       double pressure, float &voltage_battery, float &voltage_generator, float &current_generator, float &current_battery, int time)
+                       double pressure, float &voltage_battery, float &voltage_generator, float &current_generator, float &current_battery, int time, float generator_work)
 {
     frame.print(temperature, 2);
     frame.print("\t");
@@ -40,6 +42,8 @@ void radio_transmitter(Radio &radio, Frame &frame, double temperature,
     frame.print("\t");
     frame.print(current_generator, 2);
     frame.print("\t");
+    frame.print(generator_work, 2);
+    frame.print("\t");
     frame.println(time);
 
     radio.transmit(frame);
@@ -48,7 +52,7 @@ void radio_transmitter(Radio &radio, Frame &frame, double temperature,
 }
 
 void serial_print(double temperature, double pressure, float &voltage_battery,
-                  float &voltage_generator, float &current_generator, float &current_battery, int time)
+                  float &voltage_generator, float &current_generator, float &current_battery, int time, float generator_work)
 {
     SerialUSB.print(temperature, 2);
     SerialUSB.print("\t");
@@ -62,6 +66,8 @@ void serial_print(double temperature, double pressure, float &voltage_battery,
     SerialUSB.print("\t");
     SerialUSB.print(current_generator, 2);
     SerialUSB.print("\t");
+    SerialUSB.print(generator_work, 2);
+    SerialUSB.print("\t");
     SerialUSB.println(time);
 }
 
@@ -69,10 +75,10 @@ void measure(INA3221 &ina, BMP280 &bmp, double &temperature, double &pressure, f
              float &voltage_generator, float &current_generator, float &current_battery)
 {
     bmp.measureTemperatureAndPressure(temperature, pressure);
-    current_generator = ina.getCurrent(INA3221_CH1);
-    voltage_generator = ina.getVoltage(INA3221_CH1);
-    current_battery = ina.getCurrent(INA3221_CH2);
-    voltage_battery = ina.getVoltage(INA3221_CH2);
+    current_generator = ina.getCurrent(INA3221_CH2);
+    voltage_generator = ina.getVoltage(INA3221_CH2);
+    current_battery = ina.getCurrent(INA3221_CH1);
+    voltage_battery = ina.getVoltage(INA3221_CH1);
 }
 
 int millis_to_secound()
