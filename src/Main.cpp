@@ -65,19 +65,19 @@ void loop()
     float current_battery = 0;
     float voltage_generator = 0;
     float voltage_battery = 0;
-    float power_generator = 0;
-    float power_battery = 0;
+    //float power_generator = 0;
+    //float power_battery = 0;
     float generator_work = 0;
     generator_work = current_generator * current_generator * 1000;
     int time = millis_to_secound();
     if (millis() - last_cycle >= time_cycle)
     {
         measure(ina, bmp, T, P, voltage_battery, voltage_generator, current_battery, current_generator);
-        write_to_file(file, File_name, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
-        radio_transmitter(radio, frame, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
+        write_to_file(file, File_name, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time, generator_work);
+        radio_transmitter(radio, frame, T, P, voltage_battery, voltage_generator, current_battery, current_generator, time, generator_work);
         if (mode == 0)
         {
-            serial_print(T, P, voltage_battery, voltage_generator, current_battery, current_generator, time);
+            serial_print(T, P, voltage_battery, voltage_generator, current_battery, current_generator, time, generator_work);
         }
         last_cycle = millis();
     }

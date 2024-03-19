@@ -75,7 +75,7 @@ void measure(INA3221 &ina, BMP280 &bmp, double &temperature, double &pressure, f
              float &voltage_generator, float &current_generator, float &current_battery)
 {
     bmp.measureTemperatureAndPressure(temperature, pressure);
-    current_generator = ina.getCurrent(INA3221_CH2);
+    current_generator = ina.getCurrent(INA3221_CH2) * 1000;
     voltage_generator = ina.getVoltage(INA3221_CH2);
     current_battery = ina.getCurrent(INA3221_CH1);
     voltage_battery = ina.getVoltage(INA3221_CH1);

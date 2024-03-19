@@ -17,7 +17,7 @@ void start_ina(INA3221 &ina)
 {
     ina.begin(&Wire);
     ina.reset();
-    ina.setShuntRes(10, 10, 10);
+    ina.setShuntRes(100, 100, 100);
 }
 
 bool start_radio(Radio &radio)
